@@ -16,9 +16,20 @@ class Game
 
         string firstWord = GetFirstWord();     // ввод начального слова
         List<string> usedWords = new List<string>();
+
+        RunGame(firstWord, timer, usedWords);  // запуск игрового цикла
+
+        Console.WriteLine(messages["gameOver"]);
+    }
+
+    /// <summary>Основной игровой цикл.</summary>
+    /// <param name="firstWord">Базовое слово.</param>
+    /// <param name="timer">Время на ход в секундах.</param>
+    /// <param name="usedWords">Список использованных слов.</param>
+    static void RunGame(string firstWord, int timer, List<string> usedWords)
+    {
         int player = 1;
 
-        // Основной игровой цикл
         while (true)
         {
             DisplayPlayerTurn(player);
@@ -43,8 +54,6 @@ class Game
             DisplayUsedWords(usedWords);
             player = player == 1 ? 2 : 1;
         }
-
-        Console.WriteLine(messages["gameOver"]);
     }
 
     /// <summary>Выбор языка и инициализация словаря сообщений.</summary>
