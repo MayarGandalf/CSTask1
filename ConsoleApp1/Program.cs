@@ -8,18 +8,33 @@ class Game
 {
     static Dictionary<string, string> messages; // словарь для сообщений
 
+    /// <summary>Вывод текста в консоль</summary>
+    static void Print(string message = "")
+    {
+        Console.WriteLine(message);
+    }
+
+    /// <summary>Ввод текста в консоль</summary>
+    static string ReadUserInput()
+    {
+        string? input = Console.ReadLine();
+        if (input == null)
+            return "";                       
+        return input.Trim();
+    }
+
     static void Main()
     {
         messages = ChooseLanguage();           // выбор языка и получение сообщений
         int timer = GetTimerFromUser();        // получение времени на ход
-        Console.WriteLine(messages["welcome"]);
+        Print(messages["welcome"]);
 
         string firstWord = GetFirstWord();     // ввод начального слова
         List<string> usedWords = new List<string>();
 
         RunGame(firstWord, timer, usedWords);  // запуск игрового цикла
 
-        Console.WriteLine(messages["gameOver"]);
+        Print(messages["gameOver"]);
     }
 
     /// <summary>Основной игровой цикл.</summary>
@@ -62,17 +77,17 @@ class Game
     {
         while (true)
         {
-            Console.WriteLine("Choose language / Выберите язык:");
-            Console.WriteLine("1 - English");
-            Console.WriteLine("2 - Русский");
-            string choice = Console.ReadLine()?.Trim() ?? "";
+            Print("Choose language / Выберите язык:");
+            Print("1 - English");
+            Print("2 - Русский");
+            string choice = ReadUserInput();
 
             if (choice == "1")
                 return CreateEnglishMessages();
             if (choice == "2")
                 return CreateRussianMessages();
 
-            Console.WriteLine("Invalid choice. Please enter 1 or 2. / Неверный выбор. Пожалуйста, введите 1 или 2.");
+            Print("Invalid choice. Please enter 1 or 2. / Неверный выбор. Пожалуйста, введите 1 или 2.");
         }
     }
 
@@ -122,11 +137,11 @@ class Game
     {
         while (true)
         {
-            Console.WriteLine(messages["secondsChoice"]);
-            string seconds = Console.ReadLine()?.Trim() ?? "";
+            Print(messages["secondsChoice"]);
+            string seconds = ReadUserInput();
             if (int.TryParse(seconds, out int timer) && timer > 0)
                 return timer;
-            Console.WriteLine(messages["invalidSeconds"]);
+            Print(messages["invalidSeconds"]);
         }
     }
 
@@ -136,14 +151,14 @@ class Game
     {
         while (true)
         {
-            Console.WriteLine(messages["enterBase"]);
-            string word = Console.ReadLine() ?? "";
+            Print(messages["enterBase"]);
+            string word = ReadUserInput();
             word = word.Trim().ToLower();
 
             if (word.Length >= 8 && word.Length <= 30 && word.All(char.IsLetter))
                 return word;
 
-            Console.WriteLine(messages["errorBase"]);
+            Print(messages["errorBase"]);
         }
     }
 
@@ -151,9 +166,9 @@ class Game
     /// <param name="player">Номер игрока (1 или 2).</param>
     static void DisplayPlayerTurn(int player)
     {
-        Console.WriteLine();
-        Console.WriteLine(string.Format(messages["playerTurn"], player));
-        Console.WriteLine(messages["enterWord"]);
+        Print();
+        Print(string.Format(messages["playerTurn"], player));
+        Print(messages["enterWord"]);
     }
 
     /// <summary>Читает строку из консоли с ограничением по времени.</summary>
@@ -164,7 +179,7 @@ class Game
         var tcs = new TaskCompletionSource<bool>();
         using (var timer = new System.Threading.Timer(_ => tcs.TrySetResult(true), null, seconds * 1000, Timeout.Infinite))
         {
-            Task<string> readTask = Task.Run(() => Console.ReadLine());
+            Task<string> readTask = Task.Run(() => ReadUserInput());
             int completedIndex = Task.WaitAny(readTask, tcs.Task);
             return completedIndex == 0 ? readTask.Result?.Trim().ToLower() : null;
         }
@@ -174,29 +189,29 @@ class Game
     /// <param name="player">Номер игрока, не успевшего ввести слово.</param>
     static void DisplayTimeUp(int player)
     {
-        Console.WriteLine(string.Format(messages["timeUp"], player));
+        Print(string.Format(messages["timeUp"], player));
     }
 
     /// <summary>Отображает сообщение о победе игрока.</summary>
     /// <param name="player">Номер победившего игрока.</param>
     static void DisplayWinner(int player)
     {
-        Console.WriteLine(string.Format(messages["playerWins"], player));
+        Print(string.Format(messages["playerWins"], player));
     }
 
     /// <summary>Отображает сообщение о неверном слове.</summary>
     static void DisplayInvalidWord()
     {
-        Console.WriteLine(messages["invalidWord"]);
+        Print(messages["invalidWord"]);
     }
 
     /// <summary>Отображает список использованных слов.</summary>
     /// <param name="usedWords">Список использованных слов.</param>
     static void DisplayUsedWords(List<string> usedWords)
     {
-        Console.WriteLine(messages["usedWords"]);
+        Print(messages["usedWords"]);
         foreach (string word in usedWords)
-            Console.WriteLine(word);
+            Print(word);
     }
 
     /// <summary>Проверяет корректность введённого слова.</summary>
